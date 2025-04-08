@@ -1,0 +1,50 @@
+-- Database Schema Diagram for China-to-Iran Product Ordering and Tracking Web Application
+
+/*
+Database Relationships:
+
+users (1) ---> (N) projects
+projects (1) ---> (N) project_steps
+users (1) ---> (N) notifications
+projects (1) ---> (N) notifications
+
+Tables:
+- users: Stores user information for both customers and team members
+- projects: Stores order information linked to users
+- project_steps: Stores the 13 steps for each project with completion status
+- notifications: Stores notifications for users when steps are completed
+
+Triggers:
+- create_project_steps_trigger: Automatically creates the 13 steps when a new project is created
+- update_project_status_trigger: Updates project status when a step is completed
+- create_step_notification_trigger: Creates notifications when steps are completed
+*/
+
+-- Entity-Relationship Diagram (Text-based)
+/*
++---------------+       +---------------+       +---------------+
+|    users      |       |   projects    |       | project_steps |
++---------------+       +---------------+       +---------------+
+| id            |<----->| id            |<----->| id            |
+| name          |       | user_id       |       | project_id    |
+| email         |       | product_desc  |       | step_number   |
+| password_hash |       | created_at    |       | step_name     |
+| phone         |       | status        |       | completed     |
+| is_team       |       |               |       | completed_at  |
++---------------+       +---------------+       +---------------+
+       ^                       ^
+       |                       |
+       |                       |
+       |                       |
+       |                       |
++---------------+              |
+| notifications |<-------------+
++---------------+
+| id            |
+| user_id       |
+| project_id    |
+| message       |
+| created_at    |
+| read          |
++---------------+
+*/
