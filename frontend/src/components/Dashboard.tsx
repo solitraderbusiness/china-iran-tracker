@@ -11,6 +11,13 @@ interface Project {
 }
 
 const Dashboard = () => {
+  const [productName, setProductName] = useState("");
+  const [productUrl, setProductUrl] = useState("");
+  const [productImage, setProductImage] = useState("");
+  const [productCount, setProductCount] = useState(1);
+  const [sourceLocation, setSourceLocation] = useState("");
+  const [description, setDescription] = useState("");
+	
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -40,20 +47,35 @@ const Dashboard = () => {
     fetchProjects();
   }, [isAuthenticated, navigate]);
 
-  const handleCreateProject = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newProjectDescription.trim()) return;
 
-    try {
-      const newProject = await createProject(newProjectDescription);
-      setProjects([...projects, newProject]);
-      setNewProjectDescription('');
-      setShowNewProjectForm(false);
-    } catch (err) {
-      console.error('Failed to create project:', err);
-      setError('Failed to create new project. Please try again.');
-    }
-  };
+
+    const handleCreateProject = async (e) => {
+      e.preventDefault();
+      try {
+        await createProject({
+          name: productName,
+          description: description,
+          product_url: productUrl,
+          product_image: productImage,
+          product_count: productCount,
+          source_location: sourceLocation
+        });
+        // Reset form
+        setProductName("");
+        setProductUrl("");
+        setProductImage("");
+        setProductCount(1);
+        setSourceLocation("");
+        setDescription("");
+        // Refresh projects
+        fetchProjects();
+      } 
+      catch (error) {
+        console.error("Error creating project:", error);
+      }
+    };
+
+
 
   if (loading) {
     return (
@@ -84,30 +106,95 @@ const Dashboard = () => {
       {showNewProjectForm && (
         <div className="bg-gray-100 p-4 rounded-lg mb-6">
           <h2 className="text-lg font-semibold mb-3">Create New Order</h2>
-          <form onSubmit={handleCreateProject}>
-            <div className="mb-4">
-              <label htmlFor="description" className="block text-gray-700 mb-2">
-                Product Description
-              </label>
-              <textarea
-                id="description"
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Describe the products you want to order..."
-                value={newProjectDescription}
-                onChange={(e) => setNewProjectDescription(e.target.value)}
-                required
-              ></textarea>
-            </div>
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
-              >
-                Create Order
-              </button>
-            </div>
-          </form>
+         <form onSubmit={handleCreateProject}>
+  <div className="mb-4">
+    <label className="block text-gray-700 text-sm font-bold mb-2">
+      Product Name
+    </label>
+    <input
+      type="text"
+      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      value={productName}
+      onChange={(e) => setProductName(e.target.value)}
+      required
+    />
+  </div>
+  
+  <div className="mb-4">
+    <label className="block text-gray-700 text-sm font-bold mb-2">
+      Product URL
+    </label>
+    <input
+      type="url"
+      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      value={productUrl}
+      onChange={(e) => setProductUrl(e.target.value)}
+    />
+  </div>
+  
+  <div className="mb-4">
+    <label className="block text-gray-700 text-sm font-bold mb-2">
+      Product Image URL
+    </label>
+    <input
+      type="url"
+      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      value={productImage}
+      onChange={(e) => setProductImage(e.target.value)}
+    />
+  </div>
+  
+  <div className="mb-4">
+    <label className="block text-gray-700 text-sm font-bold mb-2">
+      Product Count
+    </label>
+    <input
+      type="number"
+      min="1"
+      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      value={productCount}
+      onChange={(e) => setProductCount(parseInt(e.target.value))}
+      required
+    />
+  </div>
+  
+  <div className="mb-4">
+    <label className="block text-gray-700 text-sm font-bold mb-2">
+      Source Location
+    </label>
+    <select
+      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      value={sourceLocation}
+      onChange={(e) => setSourceLocation(e.target.value)}
+      required
+    >
+      <option value="">Select Location</option>
+      <option value="Dubai">Dubai</option>
+      <option value="Iran">Iran</option>
+    </select>
+  </div>
+  
+  <div className="mb-4">
+    <label className="block text-gray-700 text-sm font-bold mb-2">
+      Description
+    </label>
+    <textarea
+      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      value={description}
+      onChange={(e) => setDescription(e.target.value)}
+      rows={4}
+      required
+    ></textarea>
+  </div>
+  
+  <button
+    type="submit"
+    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+  >
+    Create Order
+  </button>
+</form>
+ 
         </div>
       )}
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { login } from '../utils/api';
-import { useAuth } from '../context/AuthContext';
+import { login } from "../../utils/api";
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const TeamLogin = () => {

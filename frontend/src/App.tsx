@@ -11,6 +11,7 @@ import ResponsiveTest from './components/ResponsiveTest';
 import WebSocketTest from './components/WebSocketTest';
 import Header from './components/Header';
 import TeamApp from './components/team/TeamApp';
+import TestSummary from './components/TestSummary';
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
