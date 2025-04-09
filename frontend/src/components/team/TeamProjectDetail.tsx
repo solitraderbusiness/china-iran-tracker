@@ -29,6 +29,8 @@ const TeamProjectDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(false);
+  const [selectedStep, setSelectedStep] = useState<ProjectStep | null>(null);
+  const [showStepDetails, setShowStepDetails] = useState(false);
   const { isAuthenticated, isTeamMember, token } = useAuth();
   const navigate = useNavigate();
 
@@ -92,6 +94,11 @@ const TeamProjectDetail = () => {
     } finally {
       setUpdating(false);
     }
+  };
+
+  const handleStepClick = (step: ProjectStep) => {
+    setSelectedStep(step);
+    setShowStepDetails(true);
   };
 
   if (loading) {
@@ -172,8 +179,12 @@ const TeamProjectDetail = () => {
           
           <div className="space-y-4">
             {steps.map((step) => (
-              <div key={step.id} className="flex items-center p-4 border rounded-lg hover:bg-gray-50">
-                <div className="mr-4">
+              <div 
+                key={step.id} 
+                className="flex items-center p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                onClick={() => handleStepClick(step)}
+              >
+                <div className="mr-4" onClick={(e) => e.stopPropagation()}>
                   <input
                     type="checkbox"
                     checked={step.completed}
@@ -208,6 +219,79 @@ const TeamProjectDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Step Details Modal */}
+      {showStepDetails && selectedStep && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">{selectedStep.step_name}</h2>
+            
+            <div className="mb-4">
+              <h3 className="font-semibold">Status</h3>
+              <p className={selectedStep.completed ? "text-green-600" : "text-yellow-600"}>
+                {selectedStep.completed ? "Completed" : "Pending"}
+              </p>
+            </div>
+            
+            {selectedStep.completed && (
+              <>
+                <div className="mb-4">
+                  <h3 className="font-semibold">Completed On</h3>
+                  <p>{selectedStep.completed_at ? new Date(selectedStep.completed_at).toLocaleString() : "N/A"}</p>
+                </div>
+                
+                <div className="mb-4">
+                  <h3 className="font-semibold">Completed By</h3>
+                  <p>Team Member</p>
+                </div>
+              </>
+            )}
+            
+            {!selectedStep.completed && (
+              <div className="mb-4">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleStepComplete(selectedStep.id, selectedStep.step_number, selectedStep.completed);
+                    setShowStepDetails(false);
+                  }}
+                  disabled={updating}
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+                >
+                  {updating ? "Updating..." : "Mark as Completed"}
+                </button>
+              </div>
+            )}
+            
+            {/* Notes section - would be populated from backend if available */}
+            <div className="mb-4">
+              <h3 className="font-semibold">Notes</h3>
+              <p className="text-gray-600 italic">
+                {selectedStep.step_number === 1 
+                  ? "Order has been received and is being processed." 
+                  : "No additional notes available."}
+              </p>
+            </div>
+            
+            {/* Attachments section - would be populated from backend if available */}
+            <div className="mb-4">
+              <h3 className="font-semibold">Attachments</h3>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <span className="block p-2 border border-gray-200 rounded text-gray-600 italic">
+                  No attachments available
+                </span>
+              </div>
+            </div>
+            
+            <button
+              onClick={() => setShowStepDetails(false)}
+              className="mt-4 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

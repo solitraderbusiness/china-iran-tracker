@@ -46,7 +46,12 @@ class ProjectBase(BaseModel):
 
 
 class ProjectCreate(ProjectBase):
-    pass
+    name: str
+    description: str
+    product_url: Optional[str] = None
+    product_image: Optional[str] = None
+    product_count: Optional[int] = 1
+    source_location: Optional[str] = None
 
 
 class Project(ProjectBase):

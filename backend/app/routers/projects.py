@@ -56,9 +56,16 @@ async def create_project(
     """
     Create a new project
     """
+    # Create project with new fields
     db_project = Project(
         user_id=current_user.id,
-        product_description=project.product_description,
+        name=project.name,
+        description=project.description,
+        product_url=project.product_url,
+        product_image=project.product_image,
+        product_count=project.product_count,
+        source_location=project.source_location,
+        product_description=project.description,  # Use description as product_description for backward compatibility
         status="Order Received"
     )
     db.add(db_project)

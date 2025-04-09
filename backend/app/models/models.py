@@ -24,6 +24,12 @@ class Project(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
+    name = Column(String(255))
+    description = Column(Text)
+    product_url = Column(String(500), nullable=True)
+    product_image = Column(String(500), nullable=True)
+    product_count = Column(Integer, default=1)
+    source_location = Column(String(100), nullable=True)
     product_description = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     status = Column(String(50), default="Order Received")
